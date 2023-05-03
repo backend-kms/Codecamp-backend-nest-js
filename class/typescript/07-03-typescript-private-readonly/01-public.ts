@@ -17,12 +17,12 @@ class Monster {
 
 class Monster2 extends Monster {
     attack2() {
-        console.log("나의 공격력은 " + this.power + "야!");
+        console.log("나의 공격력은 " + this.power + "야!"); // 자식이 접근 가능
         this.power = 30 // 자식이 수정 가능
     }
 }
 const Monster3 = new Monster2(20);
 Monster3.attack1()
 Monster3.attack2()
-console.log(Monster3.power)
-Monster3.power = 10
+console.log(Monster3.power) // 밖에서 접근 가능
+Monster3.power = 10 // 밖에서 수정 가능
