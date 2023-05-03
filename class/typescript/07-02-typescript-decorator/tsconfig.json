@@ -1,0 +1,15 @@
+// 설치 npm add typescript --save-dev
+// https://www.npmjs.com/package/@tsconfig/recommended
+{
+    "compilerOptions": {
+        "target": "ES2015",
+        "module": "commonjs",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "experimentalDecorators": true // 데코레이터 추가
+    },
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "display": "Recommended"
+}
