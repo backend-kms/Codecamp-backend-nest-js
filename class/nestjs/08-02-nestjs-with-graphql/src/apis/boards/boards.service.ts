@@ -6,7 +6,7 @@ import { Injectable, Scope } from '@nestjs/common';
 // 생략 가능 -> default는 싱글톤
 @Injectable({ scope: Scope.DEFAULT })
 export class BoardsService {
-    getHello(): string {
-        return 'Hello World!';
-    }
+  getHello(): string {
+    return 'Hello World!';
+  }
 }
