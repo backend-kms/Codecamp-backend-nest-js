@@ -1,0 +1,15 @@
+show databases
+;
+
+use nestjs_test
+;
+
+show tables
+;
+
+desc product
+;
+
+select * 
+	from product
+;
