@@ -1,15 +1,48 @@
-show databases
-;
+-- 데이터베이스 조회 
+show databases;
 
-use nestjs_test
-;
+-- 원하는 데이터베이스 사용 
+use nestjs_test;
 
-show tables
-;
+-- 해당 데이터베이스의 테이블 조회 
+show tables;
 
-desc product
-;
+-- 해당 테이블의 컬럼 조회
+desc product;
 
-select * 
-	from product
-;
+-- 데이터 조회 (select) 사용 
+select * from product;
+
+-- 데이터 생성(=추가) 
+insert into product(id, name, description, price)
+	values(uuid(), '마우스', '좋은 마우스', 15000);
+insert into product(id, name, description, price)
+	values(uuid(), '노트', '최신 맥북!!', 20000);
+insert into product(id, name, description, price)
+	values(uuid(), '셔츠', '깔끔한 셔츠입니다.', 30000);
+	
+-- 데이터 삭제
+delete from product where name = '셔츠';
+
+-- 데이터 수정 
+update product set price = 18000 where name = '마우스';
+
+-- 데이터 연결
+-- 1. 상품 거래 위치 데이터 생성 
+insert into product_saleslocation(id, address, addressDetail, lat, lng, meetingTime)
+	values(uuid(), '구로구', '구로디지털단지역', 37.281723, 127.192387, '2023-01-10');
+-- 2. 정상적으로 데이터 생성되었는지 조회
+select * from product_saleslocation;
+-- 3. 상품 데이터에 상품 거래 위치 아이디 추가
+update product set productSaleslocationId = '765c3864-edfe-11ed-977a-9fe8b0b88a89' where name = '마우스';
+-- 4. 상품테이블, 상품거래테이블 합쳐서 조회 (효율성 증가)
+select product.id, name, price, address, addressDetail
+	from product, product_saleslocation
+ where product.productSaleslocationId = product_saleslocation.id;
+
+/* 추가 기능 */ (and, or)
+update product set isSoldout = true where name = '노트북' and price = 20000;
+update product set isSoldout = true where name = '노트북' or price = 20000;
+
+-- 한줄 주석
+/**/ 여러 줄 주석
