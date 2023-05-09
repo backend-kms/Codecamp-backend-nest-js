@@ -1,0 +1,24 @@
+/* 
+복잡한 쿼리 
+ */
+
+-- 1. 집계 쿼리: 무언가를 합산하거나 평균을 낼 때 자주 사용
+select name, price, isSoldout from product; -- 조회 
+select name, SUM(price) from product group by name;	-- 합계 
+select name, MAX(price) from product group by name;	-- 최대값
+select name, MIN(price) from product group by name; -- 최솟값
+select name, AVG(price) from product group by name; -- 평균값
+
+-- 2. 정렬 쿼리: order by를 사용하여 asc(오름차순), desc(내림차순)으로 정렬 가능
+select name, price, isSoldout from product; -- 조회
+select name, price, isSoldout from product order by price asc; -- 오름차순 정렬
+select name, price, isSoldout from product order by price desc; -- 내림차순 정렬 
+
+-- 3. 서브 쿼리: 하나의 SQL문에 포함되어 있는 또 다른 SQL문을 의미, 서브 쿼리가 먼저 실행이 된 후 메인 쿼리가 실행됨
+--  (select max(price) from product) as maxPrice: 상품 테이블에서 가격이 최댓값인 상품을 조회하여 그 가격이름을 as를 통해 maxPrice로 변경해서 데이터 조회 
+select name, price, isSoldout, (select max(price) from product) as maxPrice from product;
+
+-- ANSI-SQL
+-- mysql, postgre 등 DB마다 사용하는 SQL문법이 조금씩 다름
+-- 표준 SQL을 만들었으며, 그 이름이 ANSI-SQL
+-- TypeORM을 사용하면 짠 코드가 ANSI-SQL로 바뀌게 됨 
