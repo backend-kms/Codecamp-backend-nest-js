@@ -67,4 +67,4 @@ const fetchData2 = async () => {
   console.timeEnd("=== 한방 Promise.all ===");
 };
 
-fetchData2();
+fetchData2(); //
