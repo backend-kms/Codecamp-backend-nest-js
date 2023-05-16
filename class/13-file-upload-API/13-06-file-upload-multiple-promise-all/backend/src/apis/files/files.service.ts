@@ -7,9 +7,11 @@ export class FilesService {
   async upload({ files }: IFilesServiceUpload): Promise<string[]> {
     console.log(files);
 
-    const waitedFiles = [];
-    waitedFiles[0] = await files[0];
-    waitedFiles[1] = await files[1];
+    // const waitedFiles = [];
+    // waitedFiles[0] = await files[0];
+    // waitedFiles[1] = await files[1];
+    // 아래처럼 한줄로 한방에 가능
+    const waitedFiles = await Promise.all(files);
 
     console.log(waitedFiles); // [File, File]
 
@@ -19,24 +21,21 @@ export class FilesService {
     const bucket = 'codecamp-min-storage';
     const storage = new Storage({
       projectId: 'backend-386902',
-      keyFilename: 'backend-386902-9405c090280e.json',
+      keyFilename: 'gcp-file-storage.json',
     }).bucket(bucket);
 
     // 1-2) 스토리지에 파일 올리기
-    console.time('시간을 확 인해보자!!');
-    const results = [];
-    for (let i = 0; i < waitedFiles.length; i++) {
-      results[i] = await new Promise((resolve, reject) =>
-        waitedFiles[i]
-          .createReadStream()
-          .pipe(storage.file(waitedFiles[i].filename).createWriteStream())
-          .on('finish', () => resolve('성공'))
-          .on('error', () => reject('실패')),
-      );
-    }
-    console.timeEnd('시간을 확인해보자!!');
-    // console.log("파일전송이 완료되었습니다.")
-    // console.log(result)
+    const results = await Promise.all(
+      waitedFiles.map(
+        (el) =>
+          new Promise<string>((resolve, reject) => {
+            el.createReadStream()
+              .pipe(storage.file(el.filename).createWriteStream())
+              .on('finish', () => resolve(`${bucket}/${el.filename}`))
+              .on('error', () => reject('실패'));
+          }),
+      ),
+    );
 
     // 2. 다운로드URL 브라우저에 돌려주기
     return results;
