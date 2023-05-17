@@ -1,0 +1,32 @@
+-- 데이터베이스 목록 
+show databases;
+
+-- 프로젝트 선택 
+use nestjs_test;
+
+-- 프로시저 생성 (mysql의 함수)
+# 프로시저 생성 (세미콜론 위치 주의)
+create procedure mydummydata()
+
+# 함수의 시작 begin
+begin
+    # i라는 변수를 만드는데 숫자타입이며 default는 1
+	declare i int default 1;
+
+    # 반복문 while
+    # 중괄호 {} 사용대신 do와 end while; 사용
+	while i <= 5000000 do
+		
+		insert into board(writer, title, contents) value('철수', rand(), '반갑습니다');
+		
+		set i = i + 1;
+	end while;
+
+# 함수의 끝 end + ;
+end;
+
+-- 프로시저 목록
+show procedure status;
+
+-- 프로시저 실행 
+call mydummydata(); 
