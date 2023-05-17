@@ -1,0 +1,73 @@
+< nestjs에서 redis를 사용하기 위해 설치할 패키지들 >
+
+1. npm add redis 실제 redis가 아니며 redis에 연결하는 것을 도와줄 수 있는 npm 라이브러리
+2. npm add cache-manager@4.1.0 redis를 연결하게 해주는 매니저 역할을 하는 라이브러리
+3. npm add cache-manager-redis-store@2.0.0 cache-manager가 redis에 연결하게끔 도와주는 라이브러리
+4. npm add --dev @types/cache-manager-redis-store
+
+< redis 쓸 거라고 선언 > cache = 임시저장
+
+app.module에
+CacheModule.register<RedisClientOptions>({
+    store: redisStore,
+    url: "redis://my-redis:6379",
+    isGlobal: true, // 전역으로 redis 사용 가능
+}) // 지금부터 mysql, nestjs, redis 세개가 다 켜져있어야 함
+
+
+< redis에 저장하는 것을 test >
+
+boards.resolver.ts에
+
+@Resolver()
+export class BoardsResolver {
+  constructor(
+    private readonly boardsService: BoardsService, //
+
+    @Inject(CACHE_MANAGER)
+    private readonly cacheManager: Cache, // 추가
+  ) {}
+
+  @Query(() => String, { nullable: true })
+  async fetchBoards(): Promise<string> {
+    // 1. 캐시에서 조회하는 연습
+        const mycache = await this.cacheManager.get("qqq");
+        console.log(mycache)
+
+    // 2  조회 완료 메세지 전달
+        return '캐시에서 조회 완료';
+  }
+
+  @Mutation(() => String)
+  async createBoard(
+    @Args('createBoardInput') createBoardInput: CreateBoardInput,
+  ): Promise<string> {
+    // 1. 캐시에 등록하는 연습
+    await this.cacheManager.set("qqq", createBoardInput, {ttl: 5000}) // 추가 (0: 영구저장)
+    
+    // 2. 등록완료 메세지 전달
+    return '캐시에 등록 완료'
+  }
+}
+
+< redis의 메모리 한계점 >
+Q. 내 노트북은 메모리가 16GB인데 그럼 이만큼 쓸 수 있다는 건지?
+A. 기본 설정은 그러함. config get maxmemory로 확인 가능 (기본값 0: 내 컴퓨터 메모리 전부 다 사용한다는 뜻)
+
+Q. 꽉꽉 채워서 사용하면 많이 사용하고 좋은건지?
+A. Redis가 메모리를 다 써버리면 다른 실행중인 프로그램들이 쓸 메모리가 없음, 70%정도를 maxmemory로 사용하는 것이 일반적
+
+Q. maxmamory를 모두 사용하면 어떻게 되는지?
+A. maxmemory-policy에 따라 다름, config get maxmemory-policy라고 치면 알 수 있음 (기본값은 noeviction이며 기존 데이터 제거 하지 않는다는 뜻)
+
+Q. 이것도 문제가 있을 거 같은데 ?
+A. 맞음. 더 이상 저장할 메모리가 없는데 기존 메모리도 제거 안하려니 프로그램이 종료됨
+
+Q. maxmemory-policy의 종류가 너무 많아 뭘 써야 하는지 ?
+A. allkeys-lru를 권장, 모든 key들 중 가장 조금 최근에 사용된 것들부터 지워버림
+
+Q. 로그인 정보처럼 지우면 안되는 것은?
+A. 여러대의 Redis를 연결해서 묶음으로 사용해야 함. 이것을 Redis-Cluster라고 부름
+
+< 버전 문제 발생 >
+class-validator를 ^0.13.2로 변경

@@ -1,0 +1,23 @@
+2. 실행 
+ls ->   
+docker-compose build ->   
+docker-compose up    
+  
+3. 도커 실행창  
+docker ps  
+
+4. 해당 컨테이너 안에 접속  
+ docker exec -it 컨테이너id /bin/bash  
+  
+5. redis 접속  
+resid-cli  
+
+6. 모든 키 확인  
+keys *  
+
+7. 키 셋팅 후 확인  
+set qqq apple ->  
+get qqq ->  
+ttl qqq (-1은 영구저장) ->  
+expire qqq 20 (20초 임시저장) ->  
+ttl qqq (조회 계속 되다가 -2(조회 끝났을 때))  

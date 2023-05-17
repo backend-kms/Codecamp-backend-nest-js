@@ -1,0 +1,7 @@
+# 1. 작성
+sevices:
+  # 컴퓨터 이름
+  my-redis:
+    image: redis:latest
+    port:
+      - 6379:6379
