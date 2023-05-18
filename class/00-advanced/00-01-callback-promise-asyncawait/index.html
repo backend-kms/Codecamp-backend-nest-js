@@ -1,0 +1,127 @@
+<!-- 아래 API 연달아 사용하기 -->
+<!-- `http://numbersapi.com/random?min=16&max=200` 랜덤으로 1부터 200까지를 가져오는 API -->
+<!-- `https://koreanjson.com/posts/${num}` 그 해당하는 게시글을 조회하는 APIㅣ, 작성자 확인 가능 -->
+<!-- `https://koreanjson.com/posts?userId=${userId}` 해당 작성자가 쓴 다른 게시물 보는 API-->
+
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <title>콜백과 친구들</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      // function addEventListener(aaa, bbb){
+      //   // 세팅된 API 주소로 요청
+      //   const res = 197 // 셋팅된 API 주소로 부터 받아온 결과
+
+      //   if(aaa === "load"){
+      //     bbb(res)
+      //   }
+      // }
+
+      // callback hell 계속해서 들어가는 구조
+      const myCallback = () => {
+        const aa = new XMLHttpRequest()
+        aa.open("get", `http://numbersapi.com/random?min=16&max=200`)
+        aa.send()
+        aa.addEventListener("load", (res) => { // 콜백 함수
+          console.log(res) // API 요청의 결과(응답값)
+
+          const num = res.target.response.split(" ")[0] // 랜덤 숫자
+
+
+          const bb = new XMLHttpRequest()
+          bb.open("get", `https://koreanjson.com/posts/${num}`)
+          bb.send()
+          bb.addEventListener("load", (res) => {
+            console.log(res) // 두번째 API 요청의 결과(응답값)
+
+            const userId = JSON.parse(target.response).UserId // 글을 쓴 사람의 작성자 (UserId)
+
+            const cc = new XMLHttpRequest()
+            cc.open("get", `https://koreanjson.com/posts?userId=${userId}`)
+            cc.send()
+            cc.addEventListener("load", (res) => {
+              console.log(res) // 세번째 API 요청의 결과 = 최종 출력 결과
+            })
+          })
+        })
+      }
+
+      // 프로미스 개념
+      //  new Promise((성공했을때실행시킬함수, 실패했을때실행시킬함수) => {
+      //    try {
+      //      // 여기서 API 요청을 한다면?
+      //      const response = "철수" // 백엔드에서 "철수" 데이터 받아옴
+      //      성공했을때실행시킬함수(response) // 성공하면 이거 실행 // .then() 실행
+      //    } catch(error){
+      //      성공했을때실행시킬함수("실패했습니다.") // 실패하면 이거 실행 // .catch() 실행
+      //    }
+      //  })
+      //  .then((res) => {
+      //    console.log(res) // 철수 출력
+      //  })
+      //  .catch((err) => {
+      //    console.log(err) // 실패했습니다. 출력
+      //  })
+      
+      // axios 개념
+      // const axios = {
+      //   get: new Promise((성공했을때실행시킬함수, 실패했을때실행시킬함수) => {
+
+      //   })
+      // }
+      
+      // 콜백지옥이랑 다를게 뭐야 ? 하지만 이 아래코드의 규칙으로 콜백 지옥을 해결
+      const myPromise = () => {
+        axios
+          .get(`http://numbersapi.com/random?min=16&max=200`)
+          .then(res => { // res는 API 요청의 결과값
+            axios
+              .get(`https://koreanjson.com/posts/${num}`)
+              .then(res => {
+                axios
+                .get(`https://koreanjson.com/posts?userId=${userId}`) // res 최종 결과값
+              })
+          })
+      }
+
+      // 규칙: .then() 안에서 다른 Promise를 리턴해주게 되면 거기 붙어있어야하는 .then을 잘라서 밑에 이어붙일 수 있음
+      // 실행해보면 1->5->2->3->4
+      // 실행순서를 이해하기 어려움 -> 조금 더 직관적인 방법이 async/await
+      const myPromise2 = () => {
+        console.log("1번째로 실행됩니다.")
+        axios
+          .get(`http://numbersapi.com/random?min=16&max=200`)
+          .then(res => { // res는 API 요청의 결과값
+            console.log("2번째로 실행됩니다.")
+            return axios.get(`https://koreanjson.com/posts/${num}`) 
+          })
+          .then(res => {
+            console.log("3번째로 실행됩니다.")
+            return axios.get(`https://koreanjson.com/posts?userId=${userId}`)
+          })
+          .then(res => {
+            console.log("4번째로 실행됩니다.")
+            // res 최종 결과값
+          })
+        console.log("5번째로 실행됩니다.")
+      }
+
+      // axios, fetch 등 => 대표적인 Promise(.then, .catch 등의 기능)를 지원하는 기능
+      // axios, fetch 등을 기다리는 2가지 방법
+      // 1. .then() 활용
+      // 2. await 활용 => 주의:) await는 아무데나 붙인다고 뒤에껄 기다리는 것이 아님
+      const myAsyncAwait = async () => {
+        await axios.get(`http://numbersapi.com/random?min=16&max=200`)
+        await axios.get(`https://koreanjson.com/posts/${num}`) 
+        await axios.get(`https://koreanjson.com/posts?userId=${userId}`)
+        
+      }
+    </script>
+  </head>
+  <body>
+    <button onclick="myCallback()">Callback 연습하기!!</button>
+    <button onclick="myPromise()">Promise 연습하기!!</button>
+    <button onclick="myAsyncAwait()">AsyncAwait 연습하기!!</button>
+  </body>
+</html>
