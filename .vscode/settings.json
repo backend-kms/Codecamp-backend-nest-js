@@ -1,4 +1,16 @@
 {
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "indentRainbow.indicatorStyle": "light",
+  // we use a simple 1 pixel wide line
+  "indentRainbow.lightIndicatorStyleLineWidth": 1,
+  // the same colors as above but more visible
+  "indentRainbow.colors": [
+    "rgba(198, 98, 98, 0.84)",
+    "rgba(198, 160, 98, 0.84)",
+    "rgba(128, 198, 98, 0.84)",
+    "rgba(98, 180, 198, 0.84)",
+    "rgba(114, 98, 198, 0.84)",
+    "rgba(212, 208, 236, 0.84)"
+  ]
 }
